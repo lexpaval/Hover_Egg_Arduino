@@ -1,0 +1,13 @@
+Hover Egg Arduino - 2014
+
+This project is developed in Visual Studio 2013 with 
+Visual Micro Plugin on Arduino Duemilanove.
+
+This project consists in a "Hovering" "Egg" inside a plastic pipe, 
+using an Arduino Duemilanove Controller and a custom driver to drive
+the fan and make the Egg Hover.
+
+A second project will follow that will connect with this one in order
+to control the Arduino from an Android app via Bluetooth.
+
+More details soon...
