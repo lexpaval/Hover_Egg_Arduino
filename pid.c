@@ -34,10 +34,17 @@ void pid_update(PID* pid, double curr_error, double dt)
 	// scaling
 	p_term = (pid->proportional_gain * curr_error);
 	i_term = (pid->integral_gain     * pid->int_error);
+	// set maximum and minimun value for integrator
+	if (i_term > OUTMAX) i_term = OUTMAX;
+	else if (i_term < OUTMIN) i_term = OUTMIN;
+
 	d_term = (pid->derivative_gain   * diff);
 
 	// summation of terms
 	pid->control = p_term + i_term + d_term;
+	//set maximum and minimum value for output (control)
+	if (pid->control > OUTMAX) pid->control = OUTMAX;
+	else if (pid->control < OUTMIN) pid->control = OUTMIN;
 
 	// save current error as previous error for next iteration
 	pid->prev_error = curr_error;
