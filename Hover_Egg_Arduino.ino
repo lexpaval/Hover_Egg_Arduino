@@ -9,15 +9,14 @@ int outputValue = 0;		// the value we output for the process
 PID control;				// PID related variable
 int serialByte = 0;			// we store here the value recieved from the Serial in ASCII
 char serialData[3];			// we store the value recieved from serial converted from ASCII
-static volatile unsigned char serialCounter = 0;	// the counter to read the serial 3 times then put the Setpoint	
 
 void serialSetpoint()
 {
+	//set the last char as \0 to use for checking purposes
+	serialData[2] = '\0';
+
 	// send data only when you receive data:
 	if (Serial.available() > 0) {
-
-		// increment the counter
-		serialCounter++;
 
 		// read the incoming byte
 		serialByte = Serial.read();
@@ -65,12 +64,12 @@ void serialSetpoint()
 		Serial.print("I received: ");
 		Serial.println(serialData);
 
-		Serial.print("Counter at: ");
-		Serial.println(serialCounter);
+		Serial.print("Checker: ");
+		Serial.println(serialData[2]);
 	}
 
-	// set our point only after we've read 3 numbers
-	if (serialCounter == 3){
+	// set our point only if the last char is number
+	if (serialData[2] != '\0'){
 		setPoint = atoi(serialData);
 
 		// zeroize the error as it's no longer good
@@ -78,12 +77,15 @@ void serialSetpoint()
 
 		// reset variables used for serial
 		strcpy(serialData, "");
-		serialCounter = 0;
+		serialData[2] = '\0';
 
 		// print on serial what you got
 		Serial.print("Point set at: ");
 		Serial.println(setPoint);
 	}
+
+	// flush serial
+	Serial.flush();
 }
 
 void setup()
@@ -93,12 +95,12 @@ void setup()
 
 	/*****************************************************/
 	// manual tuning for PID v0.1
-	
+	/*
 	control.derivative_gain = 0.6;
 	control.integral_gain = 0.2;
 	control.proportional_gain = 0.6;
 	control.windup_guard = 10;
-	
+	*/
 	// works from ~100 -> 360
 
 	/****************************************************/
@@ -114,10 +116,10 @@ void setup()
 
 	/***************************************************/
 	// manual tuning for PID v0.3
-	//control.derivative_gain = 0.3;
-	//control.integral_gain = 7.5;
-	//control.proportional_gain = 0.4;
-	//control.windup_guard = 1;
+	control.derivative_gain = 0.3;
+	control.integral_gain = 7.5;
+	control.proportional_gain = 0.4;
+	control.windup_guard = 1;
 	// almost the same as above
 	// but closer to the setpoint
 }
