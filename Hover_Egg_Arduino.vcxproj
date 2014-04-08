@@ -93,9 +93,9 @@
     <ClInclude Include="..\..\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\cores\arduino\wiring_private.h" />
     <ClInclude Include="..\..\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\cores\arduino\WString.h" />
     <ClInclude Include="..\..\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\variants\standard\pins_arduino.h" />
+    <ClInclude Include="distance_GP2Y0A41SK.h" />
     <ClInclude Include="pid.h" />
     <ClInclude Include="Visual Micro\.Hover_Egg_Arduino.vsarduino.h" />
-    <ClInclude Include="Visual Micro\.license_project.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\cores\arduino\CDC.cpp" />
@@ -116,6 +116,7 @@
     <ClCompile Include="..\..\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\cores\arduino\wiring_shift.c" />
     <ClCompile Include="..\..\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\cores\arduino\WMath.cpp" />
     <ClCompile Include="..\..\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\cores\arduino\WString.cpp" />
+    <ClCompile Include="distance_GP2Y0A41SK.c" />
     <ClCompile Include="pid.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

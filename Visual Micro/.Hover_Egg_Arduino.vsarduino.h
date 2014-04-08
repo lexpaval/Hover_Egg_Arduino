@@ -46,6 +46,8 @@ void serialSetpoint();
 #include "C:\Users\Lex\Documents\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\cores\arduino\arduino.h"
 #include "C:\Users\Lex\Documents\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\variants\standard\pins_arduino.h" 
 #include "C:\Users\Lex\Documents\Arduino\Hover_Egg_Arduino\Hover_Egg_Arduino.ino"
+#include "C:\Users\Lex\Documents\Arduino\Hover_Egg_Arduino\distance_GP2Y0A41SK.c"
+#include "C:\Users\Lex\Documents\Arduino\Hover_Egg_Arduino\distance_GP2Y0A41SK.h"
 #include "C:\Users\Lex\Documents\Arduino\Hover_Egg_Arduino\pid.c"
 #include "C:\Users\Lex\Documents\Arduino\Hover_Egg_Arduino\pid.h"
 #endif

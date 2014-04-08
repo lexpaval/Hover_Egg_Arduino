@@ -1,10 +1,12 @@
 #include "pid.h"
+#include "distance_GP2Y0A41SK.h"
 
 const int pin_output = 11;	// this pin is linked to the red colored wire of the schematic
-const int pin_input = A0;	// this pin is linked to the black colored wire (min = 77 | max = ~500)
-int setPoint = 250;			// the desired point for the ball | max 360
+const int pin_input = A0;	// this pin is linked to the black colored wire
+int setPoint = 150;			// the desired point for the egg (30mm - 400mm)
 int error = 0;				// we store the error in this variable
 int sensorValue = 0;		// we store the value returned by the sensor
+int distanceValue = 0;		// we store the value of the distance in miliseconds as returned by adc_distance
 int outputValue = 0;		// the value we output for the process
 PID control;				// PID related variable
 int serialByte = 0;			// we store here the value recieved from the Serial in ASCII
@@ -91,35 +93,14 @@ void serialSetpoint()
 void setup()
 {
 	// initialise serial port
-	Serial.begin(9600);
-
-	/*****************************************************/
-	// manual tuning for PID v0.1
-	/*
-	control.derivative_gain = 0.6;
-	control.integral_gain = 0.2;
-	control.proportional_gain = 0.6;
-	control.windup_guard = 10;
-	*/
-	// works from ~100 -> 360
-
-	/****************************************************/
-	// manual tuning for PID v0.2
-	/*
-	control.derivative_gain = 0.1;
-	control.integral_gain = 0.2;
-	control.proportional_gain = 0.1;
-	control.windup_guard = 1;
-	*/
-	// works overall but with around 50 points behind
-	// and massive overshoot when going down
+	Serial.begin(4800);
 
 	/***************************************************/
-	// manual tuning for PID v0.3
-	control.derivative_gain = 0.3;
-	control.integral_gain = 7.5;
-	control.proportional_gain = 0.4;
-	control.windup_guard = 1;
+	// manual tuning for PID v0.4 on milimeters
+	control.derivative_gain = 0.6;
+	control.integral_gain = 4.7;
+	control.proportional_gain = 3.5;
+	control.windup_guard = 0;
 	// almost the same as above
 	// but closer to the setpoint
 }
@@ -129,19 +110,30 @@ void loop()
 	// read the value from the sensor
 	sensorValue = analogRead(pin_input);
 
-	// calculate the error
-	error = sensorValue - setPoint;
+	// print the value from the sensor
+	/*Serial.print("sensorValue = ");
+	Serial.println(sensorValue);*/
+
+	// convert the value from adc to milimeters
+	distanceValue = getDistanceCentimeter(sensorValue)*10;
+
+	//print the distance value in milimeters
+	Serial.print("distanceValue = ");
+	Serial.println(distanceValue);
+
+	// calculate the error based on distance
+	error = distanceValue - setPoint;
 
 	// send the error and calculate the PID
 	pid_update(&control, error, 0.1);
+
+	//print control
+	/*Serial.print("control value = ");
+	Serial.println(control.control);*/
 
 	// enjoy
 	analogWrite(pin_output, control.control); // from 0 to 255 - theoretically
 
 	// check for serial setpoint
 	serialSetpoint();
-
-	// print the value from the sensor
-	Serial.print("sensorValue = ");
-	Serial.println(sensorValue);
 }

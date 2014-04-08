@@ -24,12 +24,6 @@
     <None Include="Hover_Egg_Arduino.ino" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Visual Micro\.license_project.vsarduino.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="pid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\cores\arduino\Arduino.h">
       <Filter>_core</Filter>
     </ClInclude>
@@ -90,11 +84,14 @@
     <ClInclude Include="Visual Micro\.Hover_Egg_Arduino.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="pid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="distance_GP2Y0A41SK.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pid.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\cores\arduino\CDC.cpp">
       <Filter>_core</Filter>
     </ClCompile>
@@ -148,6 +145,12 @@
     </ClCompile>
     <ClCompile Include="..\..\Lucrare_Licienta\arduino-1.0.5-windows\arduino-1.0.5\hardware\arduino\cores\arduino\WString.cpp">
       <Filter>_core</Filter>
+    </ClCompile>
+    <ClCompile Include="pid.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="distance_GP2Y0A41SK.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
