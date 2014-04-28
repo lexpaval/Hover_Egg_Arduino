@@ -11,6 +11,10 @@ extern "C"{
 * This function will return the distance read from the sensor in centimeters
 */
 int getDistanceCentimeter(int adcValue);
+/*
+* This function will return the distance read from the sensor in milimeters
+*/
+int getDistanceMilimeter(int adcValue);
 
 #ifdef __cplusplus
 } // extern "C"

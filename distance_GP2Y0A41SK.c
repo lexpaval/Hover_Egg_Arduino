@@ -23,3 +23,21 @@ int getDistanceCentimeter(int adcValue)
 		return (1 / (0.000413153 * adcValue - 0.0055266887));
 	}
 }
+
+int getDistanceMilimeter(int adcValue)
+{
+	if (adcValue > 600)                             // lower boundary: 40 mm (30 mm means under the boundary)
+	{
+		return (30);
+	}
+
+	if (adcValue < 80)                             //upper boundary: 360 mm (returning 370 means over the boundary)
+	{
+		return (370);
+	}
+
+	else
+	{
+		return (10 / (0.000413153 * adcValue - 0.0055266887));
+	}
+}
