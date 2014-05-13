@@ -6,8 +6,9 @@ const int pin_output = 11;	// this pin is linked to the red colored wire of the 
 const int pin_input = A0;	// this pin is linked to the black colored wire
 const int bt_tx = 4;		// this pin is linked to the transmission pin on BT module
 const int bt_rx = 2;		// this pin is linked to the recieving pin on BT module
-double setPoint = 150;			// the desired point for the egg (30mm - 400mm)
-double error = 0;				// we store the error in this variable
+double setPoint = 150;		// the desired point for the egg (30mm - 400mm)
+double pid_offset = 60;		// the offset of the pid setpoint
+double error = 0;			// we store the error in this variable
 double sensorValue = 0;		// we store the value returned by the sensor
 double distanceValue = 0;	// we store the value of the distance in miliseconds as returned by adc_distance
 double outputValue = 0;		// the value we output for the process
@@ -94,6 +95,8 @@ void serialSetpoint()
 	Serial.flush();
 }
 
+void bluetoothSetpoint(){}
+
 void setup()
 {
 	// initialise serial port
@@ -103,31 +106,17 @@ void setup()
 	bluetooth.begin(4800);
 
 	/***************************************************/
-	// manual tuning for PID v0.2 on milimeters
-	//control.derivative_gain = 210;
-	//control.integral_gain = 400;
-	//control.proportional_gain = 50;
-	//control.windup_guard = 1;
-	// very close to the setpoin, gigantic overshoot downwards
-
-	/***************************************************/
-	// manual tuning for PID v0.2 on milimeters
-	control.derivative_gain = 210;
-	control.integral_gain = 400;
-	control.proportional_gain = 55;
-	control.windup_guard = 0;
-	// almost the same as above
-	// but closer to the setpoint
+	// manual tuning for PID on milimeters
+	control.derivative_gain = 2.5;
+	control.integral_gain = 0.4;
+	control.proportional_gain = 1.40;
+	control.windup_guard = 1;
 }
 
 void loop()
 {
 	// read the value from the sensor
 	sensorValue = analogRead(pin_input);
-
-	// print the value from the sensor
-	//Serial.print("sensorValue = ");
-	//Serial.println(sensorValue);
 
 	// convert the value from adc to milimeters
 	distanceValue = getDistanceMilimeter(sensorValue);
@@ -136,23 +125,14 @@ void loop()
 	Serial.print("distanceValue = ");
 	Serial.println(distanceValue);
 
-
 	// calculate the error based on distance
-	error = distanceValue - setPoint;
-	//Serial.print("error = ");
-	//Serial.println(error);
+	error = (distanceValue - setPoint) + pid_offset;
 
 	// send the error and calculate the PID
 	pid_update(&control, error, 1);
 
-	//print control
-	/*Serial.print("control value = ");
-	Serial.println(control.control);*/
-
 	// enjoy
-	analogWrite(pin_output, control.control); // from 0 to 255 - theoretically
-	//Serial.print("output = ");
-	//Serial.println(control.control);
+	analogWrite(pin_output, control.control); // from 0 to 255
 
 	// check for serial setpoint
 	serialSetpoint();

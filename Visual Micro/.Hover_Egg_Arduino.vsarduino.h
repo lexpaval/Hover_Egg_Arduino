@@ -40,6 +40,7 @@ typedef unsigned char byte;
 extern "C" void __cxa_pure_virtual() {;}
 
 void serialSetpoint();
+void bluetoothSetpoint();
 //
 //
 
