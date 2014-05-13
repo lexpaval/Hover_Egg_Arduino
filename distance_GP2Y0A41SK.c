@@ -24,6 +24,7 @@ int getDistanceCentimeter(int adcValue)
 	}
 }
 
+/// getDistanceMilimeter(): Returns the distance in milimeters, between 40 - 360 mm (3 & 37 are boundary values)
 int getDistanceMilimeter(int adcValue)
 {
 	if (adcValue > 600)                             // lower boundary: 40 mm (30 mm means under the boundary)
@@ -38,6 +39,6 @@ int getDistanceMilimeter(int adcValue)
 
 	else
 	{
-		return (10 / (0.000413153 * adcValue - 0.0055266887));
+		return (11.5 / (0.000413153 * adcValue - 0.0055266887));
 	}
 }
