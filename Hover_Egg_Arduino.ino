@@ -95,7 +95,73 @@ void serialSetpoint()
 	Serial.flush();
 }
 
-void bluetoothSetpoint(){}
+void bluetoothSetpoint()
+{
+		//set the last char as \0 to use for checking purposes
+		serialData[2] = '\0';
+
+		// send data only when you receive data:
+		if (bluetooth.available() > 0) {
+
+			// read the incoming byte
+			serialByte = bluetooth.read();
+
+			// convert from ASCII to actual numbers
+			switch (serialByte)
+			{
+			case 48:
+				strcat(serialData, "0");
+				break;
+			case 49:
+				strcat(serialData, "1");
+				break;
+			case 50:
+				strcat(serialData, "2");
+				break;
+			case 51:
+				strcat(serialData, "3");
+				break;
+			case 52:
+				strcat(serialData, "4");
+				break;
+			case 53:
+				strcat(serialData, "5");
+				break;
+			case 54:
+				strcat(serialData, "6");
+				break;
+			case 55:
+				strcat(serialData, "7");
+				break;
+			case 56:
+				strcat(serialData, "8");
+				break;
+			case 57:
+				strcat(serialData, "9");
+				break;
+
+			default:
+				// do nothing
+				break;
+			}
+		}
+
+		// set our point only if the last char is number
+		if (serialData[2] != '\0'){
+			setPoint = atoi(serialData);
+
+			// zeroize the error as it's no longer good
+			pid_zeroize(&control);
+
+			// reset variables used for serial
+			strcpy(serialData, "");
+			serialData[2] = '\0';
+
+			// print on serial what you got
+			Serial.print("Point set at: ");
+			Serial.println(setPoint);
+		}
+}
 
 void setup()
 {
@@ -103,7 +169,11 @@ void setup()
 	Serial.begin(4800);
 
 	// initialise BT port
-	bluetooth.begin(4800);
+	bluetooth.begin(115200);
+	bluetooth.print("$$$");
+	delay(100);
+	bluetooth.println("U,9600,N");
+	bluetooth.begin(9600);
 
 	/***************************************************/
 	// manual tuning for PID on milimeters
@@ -121,10 +191,6 @@ void loop()
 	// convert the value from adc to milimeters
 	distanceValue = getDistanceMilimeter(sensorValue);
 
-	//print the distance value in milimeters
-	Serial.print("distanceValue = ");
-	Serial.println(distanceValue);
-
 	// calculate the error based on distance
 	error = (distanceValue - setPoint) + pid_offset;
 
@@ -136,4 +202,5 @@ void loop()
 
 	// check for serial setpoint
 	serialSetpoint();
+	bluetoothSetpoint();
 }
