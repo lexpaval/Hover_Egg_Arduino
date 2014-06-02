@@ -41,6 +41,7 @@ extern "C" void __cxa_pure_virtual() {;}
 
 void serialSetpoint();
 void bluetoothSetpoint();
+void plot(int data1, int data2, int data3, int data4);
 //
 //
 

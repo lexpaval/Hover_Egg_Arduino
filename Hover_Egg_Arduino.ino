@@ -7,6 +7,7 @@ const int pin_input = A0;	// this pin is linked to the black colored wire
 const int bt_tx = 4;		// this pin is linked to the transmission pin on BT module
 const int bt_rx = 2;		// this pin is linked to the recieving pin on BT module
 double setPoint = 150;		// the desired point for the egg (30mm - 400mm)
+double auxSetPoint = 150;	// the intermediate setpoint to get the damping effect on going down
 double pid_offset = 60;		// the offset of the pid setpoint
 double error = 0;			// we store the error in this variable
 double sensorValue = 0;		// we store the value returned by the sensor
@@ -16,6 +17,7 @@ PID control;				// PID related variable
 int serialByte = 0;			// we store here the value recieved from the Serial in ASCII
 char serialData[3];			// we store the value recieved from serial converted from ASCII
 SoftwareSerial bluetooth(bt_tx, bt_rx); // this creates a Serial connection with the BT module
+int buffer[20];
 
 void serialSetpoint()
 {
@@ -67,12 +69,6 @@ void serialSetpoint()
 			break;
 		}
 
-		// print on serial what you got
-		Serial.print("I received: ");
-		Serial.println(serialData);
-
-		Serial.print("Checker: ");
-		Serial.println(serialData[2]);
 	}
 
 	// set our point only if the last char is number
@@ -85,10 +81,6 @@ void serialSetpoint()
 		// reset variables used for serial
 		strcpy(serialData, "");
 		serialData[2] = '\0';
-
-		// print on serial what you got
-		Serial.print("Point set at: ");
-		Serial.println(setPoint);
 	}
 
 	// flush serial
@@ -156,17 +148,30 @@ void bluetoothSetpoint()
 			// reset variables used for serial
 			strcpy(serialData, "");
 			serialData[2] = '\0';
-
-			// print on serial what you got
-			Serial.print("Point set at: ");
-			Serial.println(setPoint);
 		}
+}
+
+void plot(int data1, int data2, int data3, int data4)
+{
+	int pktSize;
+
+	buffer[0] = 0xCDAB;             //SimPlot packet header. Indicates start of data packet
+	buffer[1] = 4 * sizeof(int);      //Size of data in bytes. Does not include the header and size fields
+	buffer[2] = data1;
+	buffer[3] = data2;
+	buffer[4] = data3;
+	buffer[5] = data4;
+
+	pktSize = 2 + 2 + (4 * sizeof(int)); //Header bytes + size field bytes + data
+
+	//IMPORTANT: Change to serial port that is connected to PC
+	Serial.write((uint8_t *)buffer, pktSize);
 }
 
 void setup()
 {
 	// initialise serial port
-	Serial.begin(4800);
+	Serial.begin(9600);
 
 	// initialise BT port
 	bluetooth.begin(115200);
@@ -179,7 +184,7 @@ void setup()
 	// manual tuning for PID on milimeters
 	control.derivative_gain = 2.5;
 	control.integral_gain = 0.4;
-	control.proportional_gain = 1.40;
+	control.proportional_gain = 1.4;
 	control.windup_guard = 1;
 }
 
@@ -191,11 +196,23 @@ void loop()
 	// convert the value from adc to milimeters
 	distanceValue = getDistanceMilimeter(sensorValue);
 
+	// damping effect on going down
+	if (setPoint > auxSetPoint){
+		auxSetPoint++;
+	}
+	else {
+		// set the setpoint straight on going up
+		auxSetPoint = setPoint;
+	}
+
 	// calculate the error based on distance
-	error = (distanceValue - setPoint) + pid_offset;
+	error = (distanceValue - auxSetPoint) + pid_offset;
+
+	// plot function for simplot
+	//plot(distanceValue, setPoint, 0, 0);
 
 	// send the error and calculate the PID
-	pid_update(&control, error, 1);
+	pid_update(&control, error, 0.1);
 
 	// enjoy
 	analogWrite(pin_output, control.control); // from 0 to 255
